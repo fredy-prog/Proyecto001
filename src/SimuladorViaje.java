@@ -35,7 +35,7 @@ public class SimuladorViaje {
 
         // Menú principal
         while (true) {
-            System.out.println("==========================================");
+            System.out.println("\n\n==========================================");
             System.out.println("=== Simulador de Viaje Interplanetario ===");
             System.out.println("==========================================\n");
             System.out.println("1. Seleccionar Planeta de Destino");
@@ -58,7 +58,7 @@ public class SimuladorViaje {
                     }
                 }
                 case 4 -> {
-                    System.out.println("¡Gracias por usar el simulador! Hasta luego.");
+                    System.out.println("\n\n¡Gracias por usar el simulador! Hasta luego.\n\n");
                     return;
                 }
                 default -> System.out.println("Opción inválida. Intenta nuevamente.");
@@ -66,25 +66,95 @@ public class SimuladorViaje {
         }
     }
 
-    
     // Método para seleccionar planeta
+    public static int seleccionarPlaneta(Scanner scanner) {
+        System.out.println("\n============================");
+        System.out.println("=== Planetas Disponibles ===");
+        System.out.println("============================\n");
+        for (int i = 0; i < planetas.length; i++) {
+            System.out.printf("%d. %s (%,.0f millones de km)\n", i + 1, planetas[i], distancias[i]);
+        }
+        System.out.print("Selecciona un planeta (1-" + planetas.length + "): ");
+        int seleccion = scanner.nextInt() - 1;
 
-        public static int seleccionarPlaneta(Scanner scanner) {
-            System.out.println("\n=== Planetas Disponibles ===");
-            for (int i = 0; i < planetas.length; i++) {
-                System.out.printf("%d. %s (%,.0f millones de km)\n", i + 1, planetas[i], distancias[i]);
+        if (seleccion >= 0 && seleccion < planetas.length) {
+            System.out.printf("\nHas seleccionado: %s\n", planetas[seleccion]);
+            System.out.println("Descripción: " + descripciones[seleccion]);
+            return seleccion;
+        } else {
+            System.out.println("Selección inválida.");
+            return -1;
+        }
+    }
+
+    // Método para seleccionar nave
+    public static int seleccionarNave(Scanner scanner) {
+        System.out.println("\n=========================");
+        System.out.println("=== Naves Disponibles ===");
+        System.out.println("=========================\n");
+        for (int i = 0; i < naves.length; i++) {
+            System.out.printf("%d. %s (Velocidad: %.0f millones de km/día, Capacidad: %d pasajeros)\n",
+                    i + 1, naves[i], velocidades[i], capacidades[i]);
+        }
+        System.out.print("Selecciona una nave (1-" + naves.length + "): ");
+        int seleccion = scanner.nextInt() - 1;
+
+        if (seleccion >= 0 && seleccion < naves.length) {
+            System.out.printf("\nHas seleccionado: %s\n", naves[seleccion]);
+            return seleccion;
+        } else {
+            System.out.println("Selección inválida.");
+            return -1;
+        }
+    }
+
+    // Método para iniciar el viaje
+    public static void iniciarViaje(int planeta, int nave) {
+        double distancia = distancias[planeta];
+        double velocidad = velocidades[nave];
+        double duracion = distancia / velocidad; // Duración en días
+
+        System.out.printf("\n=== Simulación del Viaje ===\n");
+        System.out.printf("Destino: %s\n", planetas[planeta]);
+        System.out.printf("Distancia: %,.0f millones de km\n", distancia);
+        System.out.printf("Duración estimada: %.2f días\n", duracion);
+
+        Random random = new Random();
+
+        // Simulación del progreso
+        for (int i = 0; i <= 100; i += 20) {
+            System.out.printf("Progreso del viaje: %d%%\n", i);
+            if (i == 0) System.out.println("Inicio del viaje...");
+            else if (i == 50) System.out.println("Mitad del camino...");
+            else if (i == 100) System.out.println("Llegada al destino...");
+
+            // Posibilidad de que ocurra un evento (30% de probabilidad)
+            if (random.nextInt(100) < 30) {
+                eventoAleatorio();
             }
-            System.out.print("Selecciona un planeta (1-" + planetas.length + "): ");
-            int seleccion = scanner.nextInt() - 1;
-    
-            if (seleccion >= 0 && seleccion < planetas.length) {
-                System.out.printf("\n Has seleccionado: %s \n", planetas[seleccion]);
-                System.out.println("Descripción: " + descripciones[seleccion]);
-                return seleccion;
-            } else {
-                System.out.println("Selección inválida.");
-                return -1;
+
+            try {
+                Thread.sleep(1000); // Pausa de 1 segundo para simular tiempo real
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
-   
+        System.out.println("\n¡Has llegado a " + planetas[planeta] + " con éxito!\n");
+        System.out.println("FIN DEL JUEGO\n");
+    }
+
+    // Método para eventos aleatorios
+    public static void eventoAleatorio() {
+        Random random = new Random();
+        int evento = random.nextInt(5); // Genera un número aleatorio entre 0 y 4
+
+        switch (evento) {
+            case 0 -> System.out.println("Problema técnico: Uno de los motores falló. La duración del viaje aumenta un 20%.");
+            case 1 -> System.out.println("Encuentro con una nave alienígena. ¡Pierdes tiempo tratando de comunicarte!");
+            case 2 -> System.out.println("Impacto de meteoritos: La nave sufre daños menores, pero puedes continuar.");
+            case 3 -> System.out.println("Condiciones ideales: Encuentras una corriente gravitacional que acelera el viaje.");
+            case 4 -> System.out.println("Problemas de suministro: El equipo pierde parte de sus provisiones.");
+            default -> System.out.println("Nada fuera de lo común. El viaje continúa sin incidentes.");
+        }
+    }
 }
